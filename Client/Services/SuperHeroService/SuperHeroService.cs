@@ -54,7 +54,7 @@ namespace CRUDApplication.Client.Services.SuperHeroService
             var result = await _http.PostAsJsonAsync("api/superhero", hero);
             await SetHeroes(result);
         }
-
+        
         public async Task DeleteSuperHero(int id)
         {
             var result = await _http.DeleteAsync($"api/superhero/{id}");
