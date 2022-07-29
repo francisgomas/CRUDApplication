@@ -1,0 +1,70 @@
+﻿@page "/superhero"
+@inject ISuperHeroService SuperHeroService
+@inject NavigationManager NavigationManager
+
+<h3>SuperHeroes</h3>
+<PageTitle>SuperHeroes</PageTitle>
+
+<div>
+    <button class="btn btn-primary" @onclick="CreateHero" ><span class="oi oi-plus"></span>&nbsp;Create SuperHero</button>
+</div>
+
+@if (SuperHeroService.Heroes != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Hero Name</th>
+                <th>Comic Name</th>
+                <th>Movie Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var superhero in SuperHeroService.Heroes)
+            {
+                <tr>
+                    <td>@superhero.FirstName</td>
+                    <td>@superhero.LastName</td>
+                    <td>@superhero.HeroName</td>
+                    <td>@superhero.Comic.Name</td>
+                    <td>@superhero.Movie.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => ShowHero(superhero.Id))" ><span class="oi oi-eye"></span></button>
+                        <button class="btn btn-warning" @onclick="(() => EditHero(superhero.Id))" ><span class="oi oi-pencil"></span></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No records found.</p>
+}
+
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await SuperHeroService.GetSuperHeroes();
+    }
+
+    void ShowHero(int id)
+    {
+        NavigationManager.NavigateTo($"superhero/{id}");
+    }
+
+    void EditHero(int? id)
+    {
+        NavigationManager.NavigateTo($"superhero/edit/{id}");
+    }
+
+    void CreateHero()
+    {
+        NavigationManager.NavigateTo($"superhero/edit");
+    }
+}

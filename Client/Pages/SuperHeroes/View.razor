@@ -1,0 +1,49 @@
+﻿@page "/superhero/{id:int}"
+
+@inject ISuperHeroService SuperHeroService
+@inject NavigationManager NavigationManager
+
+<PageTitle>View @hero.HeroName</PageTitle>
+
+<p>
+    <button class="btn btn-primary" @onclick="(() => IndexHeroes())">View All</button>
+</p>
+<h3>View @hero.HeroName</h3>
+<p>
+    <p>
+        Id: @hero.Id
+    </p>
+    <p>
+        First Name: @hero.FirstName
+    </p>
+    <p>
+        Last Name: @hero.LastName
+    </p>
+    <p>
+        Hero Name: @hero.HeroName
+    </p>
+    <p>
+        Comic Name: @hero.Comic.Name
+    </p>
+     <p>
+        Movie Name: @hero.Movie.Name
+    </p>
+</p>
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    SuperHero hero = new SuperHero{ Comic = new Comic(), Movie = new Movie() };
+
+    protected override async Task OnInitializedAsync()
+    {
+        hero = await SuperHeroService.GetSingleSuperHero((int) id);
+    }
+
+    void IndexHeroes()
+    {
+        NavigationManager.NavigateTo("superhero");
+    }
+}

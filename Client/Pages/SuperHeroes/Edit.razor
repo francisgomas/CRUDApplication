@@ -1,0 +1,121 @@
+﻿@page "/superhero/edit"
+@page "/superhero/edit/{id:int}"
+
+@inject ISuperHeroService SuperHeroService
+@inject NavigationManager NavigationManager
+
+@if (id == null)
+{
+    <PageTitle>Create a new Super Hero</PageTitle>
+    <h3>Create a new Super Hero</h3>
+}
+else
+{
+    <PageTitle>Edit @hero.HeroName</PageTitle>
+    <h3>Edit @hero.HeroName</h3>
+}
+
+<EditForm Model="hero" OnValidSubmit="handleSubmit">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="firstname">First Name </label>
+        <InputText @bind-Value="hero.FirstName" id="firstname" class="form-control"></InputText>
+        <div class="col-sm-8 text-danger">
+            <ValidationMessage For="@(() => hero.FirstName)" />
+        </div>
+    </div>
+    <div>
+        <label for="lastname">Last Name: </label>
+        <InputText @bind-Value="hero.LastName" id="lastname" class="form-control"></InputText>
+        <div class="col-sm-8 text-danger">
+            <ValidationMessage For="@(() => hero.LastName)" />
+        </div>
+    </div>
+    <div>
+        <label for="heroname">Hero Name: </label>
+        <InputText @bind-Value="hero.HeroName" id="heroname" class="form-control"></InputText>
+        <div class="col-sm-8 text-danger">
+            <ValidationMessage For="@(() => hero.HeroName)" />
+        </div>
+    </div>
+    <div>
+        <label>Comic Name: </label>
+        <InputSelect @bind-Value="hero.ComicId" class="form-select">
+            @foreach (var comic in SuperHeroService.Comics)
+           {
+               <option value="@comic.Id">@comic.Name</option>
+           }
+        </InputSelect>
+        <div class="col-sm-8 text-danger">
+            <ValidationMessage For="@(() => hero.ComicId)" />
+        </div>
+    </div>
+    <div>
+        <label>Movie Name: </label>
+        <InputSelect @bind-Value="hero.MovieId" class="form-select">
+            @foreach (var movie in SuperHeroService.Movies)
+           {
+               <option value="@movie.Id">@movie.Name</option>
+           }
+        </InputSelect>
+        <div class="col-sm-8 text-danger">
+            <ValidationMessage For="@(() => hero.MovieId)" />
+        </div>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    @if (id != null)
+    {
+        <button class="btn btn-danger" type="button" @onclick="DeleteHero">Delete</button>
+    } 
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    string btnText = string.Empty;
+
+    SuperHero hero = new SuperHero{ Comic = new Comic(), Movie = new Movie() };
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = id == null ? "Create SuperHero" :  "Update SuperHero";
+        await SuperHeroService.GetComics();
+        await SuperHeroService.GetMovies();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id == null)
+        {
+            hero.Comic = SuperHeroService.Comics[0];
+            hero.ComicId = hero.Comic.Id;
+            hero.Movie = SuperHeroService.Movies[0];
+            hero.MovieId = hero.Movie.Id;
+        }
+        else
+        {
+            hero = await SuperHeroService.GetSingleSuperHero((int)id);
+        }
+    }
+
+    async Task handleSubmit()
+    {
+        if (id != null)
+        {
+            await SuperHeroService.UpdateSuperHero(hero);
+        }
+        else
+        {
+            await SuperHeroService.CreateSuperHero(hero);
+        }
+    }
+
+    async Task DeleteHero()
+    {
+        await SuperHeroService.DeleteSuperHero(hero.Id);
+    }
+}
