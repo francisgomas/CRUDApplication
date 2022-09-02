@@ -2,38 +2,38 @@
 using CRUDApplication.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace CRUDApplication.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220728225641_ChangeComicInSuperHero")]
-    partial class ChangeComicInSuperHero
+    [Migration("20220902002814_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CRUDApplication.Shared.Comic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -52,32 +52,66 @@ namespace CRUDApplication.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CRUDApplication.Shared.Movie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Movies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Avengers End Game"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Batman"
+                        });
+                });
+
             modelBuilder.Entity("CRUDApplication.Shared.SuperHero", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ComicId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("HeroName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ComicId");
+
+                    b.HasIndex("MovieId");
 
                     b.ToTable("SuperHeroes");
 
@@ -87,16 +121,18 @@ namespace CRUDApplication.Server.Migrations
                             Id = 1,
                             ComicId = 1,
                             FirstName = "Francis",
-                            HeroName = "Pado",
-                            LastName = "Gomas"
+                            HeroName = "Incredible Hulk",
+                            LastName = "Gomas",
+                            MovieId = 2
                         },
                         new
                         {
                             Id = 2,
                             ComicId = 2,
                             FirstName = "Neha",
-                            HeroName = "Lado",
-                            LastName = "Kumar"
+                            HeroName = "Wonder Woman",
+                            LastName = "Kumar",
+                            MovieId = 1
                         });
                 });
 
@@ -108,7 +144,15 @@ namespace CRUDApplication.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CRUDApplication.Shared.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Comic");
+
+                    b.Navigation("Movie");
                 });
 #pragma warning restore 612, 618
         }

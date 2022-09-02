@@ -16,7 +16,7 @@
                     Id = 1,
                     FirstName = "Francis",
                     LastName = "Gomas",
-                    HeroName = "Pado",
+                    HeroName = "Incredible Hulk",
                     ComicId = 1,
                     MovieId = 2,
                 },
@@ -25,7 +25,7 @@
                     Id = 2,
                     FirstName = "Neha",
                     LastName = "Kumar",
-                    HeroName = "Lado",
+                    HeroName = "Wonder Woman",
                     ComicId = 2,
                     MovieId = 1
                 }
