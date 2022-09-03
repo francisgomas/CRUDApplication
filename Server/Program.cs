@@ -30,7 +30,7 @@ else
     "; Username=" + username +
     "; Password=" + password +
     "; Port=" + uri.Port +
-    "; SSL Mode=Require; Trust Server Certificate=true;";
+    ";";
 
     builder.Services.AddDbContext<DataContext>(options =>
         options.UseNpgsql(connectionString)
