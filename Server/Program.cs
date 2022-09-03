@@ -9,9 +9,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+
+string connectionString = null;
+string envVar = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+if (string.IsNullOrEmpty(envVar))
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<DataContext>(options =>
+        options.UseSqlServer(connectionString)
+    );
+}
+else
+{
+    var uri = new Uri(envVar);
+    var username = uri.UserInfo.Split(':')[0];
+    var password = uri.UserInfo.Split(':')[1];
+    connectionString =
+    "; Database=" + uri.AbsolutePath.Substring(1) +
+    "; Username=" + username +
+    "; Password=" + password +
+    "; Port=" + uri.Port +
+    "; SSL Mode=Require; Trust Server Certificate=true;";
+
+    builder.Services.AddDbContext<DataContext>(options =>
+        options.UseNpgsql(connectionString)
+    );
+}
 
 var app = builder.Build();
 
