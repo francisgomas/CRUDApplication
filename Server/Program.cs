@@ -12,17 +12,17 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<DataContext>(options =>
 {
-    /*var pgUserId = Environment.GetEnvironmentVariable("POSTGRES_USER_ID");
+    var pgUserId = Environment.GetEnvironmentVariable("POSTGRES_USER_ID");
     var pgPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
     var pgHost = Environment.GetEnvironmentVariable("POSTGRES_HOST");
     var pgPort = Environment.GetEnvironmentVariable("POSTGRES_PORT");
-    var pgDatabase = Environment.GetEnvironmentVariable("POSTGRES_DB");*/
+    var pgDatabase = Environment.GetEnvironmentVariable("POSTGRES_DB");
 
-    var pgUserId = "noxxnfnoikpdbp";
+    /*var pgUserId = "noxxnfnoikpdbp";
     var pgPassword = "19335c476b9dd6aad340496df36d0ba7e6dcffb1b99991e60a5e007b96c17a71";
     var pgHost = "ec2-35-170-21-76.compute-1.amazonaws.com";
     var pgPort = "5432";
-    var pgDatabase = "d1ujltko3uuu3b";
+    var pgDatabase = "d1ujltko3uuu3b";*/
 
     var connStr = $"Server={pgHost};Port={pgPort};User Id={pgUserId};Password={pgPassword};Database={pgDatabase}";
 
